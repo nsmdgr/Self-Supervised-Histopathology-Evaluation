@@ -5,8 +5,8 @@
 - [X] BACH
 - [X] Patch Camelyon
 - [ ] BreakHis
-- [ ] NCT-CRC-HE-100K
-  - [ ] Test Set from CRC-VAL-HE-7K,    
+- [X] NCT-CRC-HE-100K
+  - [X] Test Set from CRC-VAL-HE-7K,    
 - [ ] PANDA
 
 ### TODO Segmentation
