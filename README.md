@@ -2,8 +2,8 @@
 
 ### TODO Classification
 
-- [ ] BACH
-- [ ] Patch Camelyon
+- [X] BACH
+- [X] Patch Camelyon
 - [ ] BreakHis
 - [ ] NCT-CRC-HE-100K
   - [ ] Test Set from CRC-VAL-HE-7K,    
