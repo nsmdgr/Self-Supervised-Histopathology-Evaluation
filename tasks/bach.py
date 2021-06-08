@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 import numpy as np
 from numpy.random import default_rng
 
-MEAN, STD = torch.tensor([0.7169, 0.6170, 0.8427]), torch.tensor([0.1661, 0.1885, 0.1182]) # calculated on train + valid set
+MEAN, STD = torch.tensor([0.7169, 0.6170, 0.8427]), torch.tensor([0.1661, 0.1885, 0.1182]) # calculated on training and validation set
 
 class Bach:
     
@@ -26,9 +26,11 @@ class Bach:
             
         self.train_ds, self.valid_ds, self.train_sampler, self.valid_sampler = self.prepare_datasets()
         
+    
     def download_data(self):
         url = 'https://zenodo.org/record/3632035/files/ICIAR2018_BACH_Challenge.zip'
         download_and_extract_archive(url, self.root)
+    
     
     def prepare_datasets(self):
         train_ds = ImageFolder(self.root, self.train_transform)
@@ -48,15 +50,14 @@ class Bach:
         
         return train_ds, valid_ds, train_sampler, valid_sampler
     
+    
     def get_dataloaders(self, batch_size, shuffle=True, pin_memory=True, num_workers=0):
         train_dl = DataLoader(
             self.train_ds, batch_size=batch_size, sampler=self.train_sampler, 
-            shuffle=shuffle, num_workers=num_workers, pin_memory=pin_memory
-        )
+            shuffle=shuffle, num_workers=num_workers, pin_memory=pin_memory)
         
         valid_dl = DataLoader(
-            self.valid_ds, batch_size=batch_size, sampler=self.train_sampler,
-            num_workers=num_workers, pin_memory=pin_memory
-        )
+            self.valid_ds, batch_size=batch_size, sampler=self.valid_sampler,
+            num_workers=num_workers, pin_memory=pin_memory)
         
         return train_dl, valid_dl
