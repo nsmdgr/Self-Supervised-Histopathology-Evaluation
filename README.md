@@ -4,7 +4,7 @@
 
 - [X] BACH
 - [X] Patch Camelyon
-- [ ] BreakHis
+- [X] BreakHis
 - [X] NCT-CRC-HE-100K
   - [X] Test Set from CRC-VAL-HE-7K,    
 - [ ] PANDA
