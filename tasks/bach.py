@@ -3,6 +3,7 @@ import torch
 from torchvision.datasets import ImageFolder
 from torchvision.datasets.utils import download_and_extract_archive
 from torch.utils.data.sampler import SubsetRandomSampler
+from torch.utils.data import Subset
 from torch.utils.data import DataLoader
 
 import numpy as np
@@ -24,7 +25,7 @@ class Bach:
             self.download_data()
             self.root = self.root/'ICIAR2018_BACH_Challenge/Photos' # extend root directory to point to images
             
-        self.train_ds, self.valid_ds, self.train_sampler, self.valid_sampler = self.prepare_datasets()
+        self.train_ds, self.valid_ds = self.prepare_datasets()
         
     
     def download_data(self):
@@ -45,19 +46,20 @@ class Bach:
             rng.shuffle(indices)
         
         train_idx, valid_idx = indices[split:], indices[:split]
-        train_sampler = SubsetRandomSampler(train_idx)
-        valid_sampler = SubsetRandomSampler(valid_idx)
+        train_ds = Subset(train_ds, train_idx)
+        valid_ds = Subset(valid_ds, valid_idx)
         
-        return train_ds, valid_ds, train_sampler, valid_sampler
+        return train_ds, valid_ds
     
     
-    def get_dataloaders(self, batch_size, shuffle=True, pin_memory=True, num_workers=0):
+    def get_dataloaders(self, batch_size, shuffle=True, pin_memory=True, num_workers=0, sampler=None):
+        
         train_dl = DataLoader(
-            self.train_ds, batch_size=batch_size, sampler=self.train_sampler, 
+            self.train_ds, batch_size=batch_size, sampler=sampler, 
             shuffle=shuffle, num_workers=num_workers, pin_memory=pin_memory)
         
         valid_dl = DataLoader(
-            self.valid_ds, batch_size=batch_size, sampler=self.valid_sampler,
+            self.valid_ds, batch_size=batch_size, sampler=sampler,
             num_workers=num_workers, pin_memory=pin_memory)
         
         return train_dl, valid_dl
