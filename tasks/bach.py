@@ -26,7 +26,6 @@ class DatasetFromSubset(Dataset):
 
     def __len__(self):
         return len(self.subset)
-        R2n3f,u8}
 
 
 class Bach:
