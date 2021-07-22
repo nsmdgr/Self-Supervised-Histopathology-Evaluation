@@ -2,9 +2,8 @@
 import torch
 from torchvision.datasets import ImageFolder
 from torchvision.datasets.utils import download_and_extract_archive
-from torch.utils.data.sampler import SubsetRandomSampler
-from torch.utils.data import Subset, random_split
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, random_split
+from utils import DatasetFromSubset
 
 import numpy as np
 from numpy.random import default_rng
@@ -13,24 +12,9 @@ from numpy.random import default_rng
 MEAN, STD = torch.tensor([0.7169, 0.6170, 0.8427]), torch.tensor([0.1661, 0.1885, 0.1182]) # calculated on training and validation set
 
 
-class DatasetFromSubset(Dataset):
-    def __init__(self, subset, transform=None):
-        self.subset = subset
-        self.transform = transform
-
-    def __getitem__(self, index):
-        x, y = self.subset[index]
-        if self.transform:
-            x = self.transform(x)
-        return x, y
-
-    def __len__(self):
-        return len(self.subset)
-
-
 class Bach:
     
-    def __init__(self, root, train_transform, valid_transform, download=False, split_pcts=[0.6, 0.2, 0.2]):
+    def __init__(self, root, train_transform, valid_transform, download=False, split_pcts=[0.6, 0.2, 0.2], seed=42):
         
         assert len(split_pcts) == 3 and np.sum(split_pcts) == 1.0
         
@@ -38,6 +22,7 @@ class Bach:
         self.train_transform = train_transform
         self.valid_transform = valid_transform
         self.split_pcts = split_pcts
+        self.seed = seed
         
         if download:
             self.download_data()
@@ -62,7 +47,8 @@ class Bach:
             int(np.floor(n_samples * self.split_pcts[2]))  # test
         ]
 
-        train_ds, valid_ds, test_ds = random_split(ds, split_lens, generator=torch.Generator().manual_seed(42))
+        rnd_gen = torch.Generator().manual_seed(self.seed)
+        train_ds, valid_ds, test_ds = random_split(ds, split_lens, generator=rnd_gen)
         train_ds = DatasetFromSubset(train_ds, self.train_transform)
         valid_ds = DatasetFromSubset(valid_ds, self.valid_transform)
         test_ds  = DatasetFromSubset(test_ds,  self.valid_transform)
